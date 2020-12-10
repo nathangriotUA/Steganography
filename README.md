@@ -1,2 +1,2 @@
 # Steganography
-TP2 sécurité staganography
+TP2 sécurité steganography

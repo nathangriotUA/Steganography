@@ -20,8 +20,7 @@ def text_to_bin(text):
     bins = []
 
     for char in chars:
-        bin_char = bin(char)
-        bin_char = bin_char[2:]
+        bin_char = bin(char)[2:].zfill(8)
         bin_char = list(bin_char)
         bins += bin_char
 
@@ -46,7 +45,7 @@ def check_conditions(ASCII,conditions):
                 condition = False
             break
        
-    return conditions["F"]
+    return conditions["M"]
 
 
 def read(file_encrypted):
@@ -68,9 +67,8 @@ def read(file_encrypted):
     ASCIIS = []
     ASCII = []
 
-    stop_Condition = {"E" : False, "O" : False, "F" : False}
+    stop_Condition = {"E" : False, "O" : False, "M" : False}
 
-    test = 0
     for img_value in list_binaries_of_files:
         value = '{0:08b}'.format(img_value)[-1:] # get low weight bit
         ASCII.append(value)
@@ -83,8 +81,7 @@ def read(file_encrypted):
             ASCIIS.append(ASCII_char)
             ASCII = []
 
-            test += 1
-            if check_conditions(ASCII_char, stop_Condition) or test == 10:
+            if check_conditions(ASCII_char, stop_Condition) :
                 break
 
     return "".join(ASCIIS)
@@ -108,9 +105,8 @@ def write(file,bins):
         list_binaries_of_files += list(x)
 
     if len(list_binaries_of_files) < len(bins):
-        SystemError("Message is too long in order to fit in this image.")
+        SystemError("Message is to long in order to fit in this image.")
 
-    print(img[0][:10])
     newImg = []
     for img_value, encrypted_value  in zip(list_binaries_of_files, bins):
         bin_value = '{0:08b}'.format(img_value)
@@ -125,16 +121,14 @@ def write(file,bins):
         newImg.append(int(new_bin, 2))
 
     i = 0
-    for x in img:
-        for value in x:
-            print(value,newImg[i])
-            value = newImg[i]
+    for x in range(len(img)):
+        for y in range(len(img[x])):
+            img[x][y] = newImg[i]
             i+=1
             if i == len(newImg):
                 break
         if i == len(newImg):
             break
-    print(img[0][:10])
 
     f_encrypted = open(file[:-4] + '_encrypted.png', 'wb')
     w = png.Writer(f[0], f[1], greyscale=False, bitdepth=f[3]["bitdepth"], alpha=True)
@@ -148,7 +142,7 @@ def main():
     args = parser.parse_args()
 
     if args.w:
-        bins = text_to_bin("test"+"EOF")
+        bins = text_to_bin("test")
         write(args.data,bins)
     else:
         read(args.data)

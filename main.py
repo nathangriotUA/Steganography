@@ -2,11 +2,13 @@ import png
 import argparse
 import subprocess
 
-
 parser = argparse.ArgumentParser()
-#parser.add_argument("datatype", help = "file or text [ -f | -t ]")
+parser.add_argument("image", help = "image file", type = str )
 parser.add_argument("-w", help = "switch to writing mode", action = "store_true")
-parser.add_argument("data", help = "file name or text", type = str )
+parser.add_argument("-f", help = "read message from file", type = str)
+parser.add_argument("-t", help = "read message from text", type = str)
+parser.add_argument("-filename", help = 'filename', type = str )
+parser.add_argument("-message", help = 'message', type = str )
 
 def text_to_bin(text):
     ''' convert text into arrays of bins:
@@ -25,6 +27,19 @@ def text_to_bin(text):
         bins += bin_char
 
     return bins
+
+
+def readFromFile(filename):
+    ''' allows to read the content of a file:
+        input:
+            - filename
+        output:
+            - file content (str)
+    '''
+    file = open(filename, "r")
+    text = file.read()
+    file.close()
+    return text
 
 def check_conditions(ASCII,conditions):
     ''' This method checks if the conditions are met to stop reading the file
@@ -74,7 +89,7 @@ def read(file_encrypted):
         ASCII.append(value)
         i+=1
 
-        if i == 8:
+        if i == 8: # every 8 binary we get the new ascii and append it
             i = 0
             ASCII = "".join(ASCII)
             ASCII_char = chr(int(ASCII, 2))
@@ -84,15 +99,13 @@ def read(file_encrypted):
             if check_conditions(ASCII_char, stop_Condition) :
                 break
 
-    return "".join(ASCIIS)
+    return "".join(ASCIIS)[:-3]
 
 def write(file,bins):
     ''' Write ASCII message in png image :
         input:
             - filename (str)
-            - array of ASCII in bin 
-        output:
-            - True or False (if code was written)
+            - array of ASCII in binary
         errors:
             - code is to long too fit in image
     '''
@@ -140,12 +153,19 @@ def write(file,bins):
 def main():
     ''' Main function '''
     args = parser.parse_args()
-
     if args.w:
-        bins = text_to_bin("test")
-        write(args.data,bins)
+        if args.t:
+            message = args.t
+        elif args.f:
+            message = readFromFile(args.f)
+        else:
+            message = input('Please write your message: ')
+
+        bins = text_to_bin(message)
+        write(args.image, bins)
+
     else:
-        read(args.data)
+        print(read(args.image))
 
 
 if __name__ == '__main__':

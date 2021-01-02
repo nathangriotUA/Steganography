@@ -2,6 +2,7 @@ import png
 import argparse
 import subprocess
 
+
 parser = argparse.ArgumentParser()
 parser.add_argument("image", help = "image file", type = str )
 parser.add_argument("-w", help = "switch to writing mode", action = "store_true")

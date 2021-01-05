@@ -1,7 +1,7 @@
 import png
 import argparse
 import subprocess
-
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("image", help = "image file", type = str )
@@ -42,7 +42,7 @@ def readFromFile(filename):
     file.close()
     return text
 
-def check_conditions(ASCII,conditions):
+def check_conditions(ASCII, conditions):
     ''' This method checks if the conditions are met to stop reading the file
         input:
             ASCII char
@@ -102,7 +102,7 @@ def read(file_encrypted):
 
     return "".join(ASCIIS)[:-3]
 
-def write(file,bins):
+def write(file, bins):
     ''' Write ASCII message in png image :
         input:
             - filename (str)
@@ -166,7 +166,13 @@ def main():
         write(args.image, bins)
 
     else:
-        print(read(args.image))
+        message = read(args.image)
+        p1 = subprocess.Popen(["echo",message], stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(["strings","-n","1"], stdin=p1.stdout, stdout=subprocess.PIPE)
+        p1.stdout.close()  
+        output = p2.communicate()[0]
+        print(output)
+
 
 
 if __name__ == '__main__':

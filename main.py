@@ -167,11 +167,14 @@ def main():
 
     else:
         message = read(args.image)
-        p1 = subprocess.Popen(["echo",message], stdout=subprocess.PIPE)
-        p2 = subprocess.Popen(["strings","-n","1"], stdin=p1.stdout, stdout=subprocess.PIPE)
-        p1.stdout.close()  
-        output = p2.communicate()[0]
-        print(output)
+        try:
+            p1 = subprocess.Popen(["echo",message], stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(["strings","-n","1"], stdin=p1.stdout, stdout=subprocess.PIPE)
+            p1.stdout.close()  
+            output = p2.communicate()[0]
+            print(output)
+        except :
+            print("error message not found")
 
 
 

@@ -18,6 +18,8 @@ there are multiple arguments:
 example to write in image:
 
     python3 main.py [image] -w -t [text]
+    python3 main.py [image] -w -f [file name]
+    python3 main.py [image] -w 
 
 example to read in image:
 
